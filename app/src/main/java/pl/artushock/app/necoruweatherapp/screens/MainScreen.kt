@@ -16,6 +16,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import pl.artushock.app.necoruweatherapp.R
 import pl.artushock.app.necoruweatherapp.ui.theme.BlueLight
 
@@ -48,13 +49,22 @@ fun MainScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = "20 Jun 2023 13:00",
                         style = TextStyle(fontSize = 15.sp),
                         color = Color.White
+                    )
+                    
+                    AsyncImage(
+                        model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdAT4AFIvGBd96752ySY9F9CZL-BGJVYf90Q&usqp=CAU",
+                        contentDescription ="",
+                        modifier = Modifier.size(35.dp)
                     )
                 }
             }
