@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -17,6 +18,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.pagerTabIndicatorOffset
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
 import pl.artushock.app.necoruweatherapp.R
 import pl.artushock.app.necoruweatherapp.ui.theme.BlueLight
 
@@ -35,7 +41,7 @@ fun MainScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(6.dp)
+            .padding(vertical = 6.dp, horizontal = 10.dp)
     ) {
         MainCard()
         TabLayout()
@@ -133,31 +139,50 @@ private fun MainCard() {
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun TabLayout() {
     val tabList = listOf("HOURS", "DAYS")
+    val pagerState = rememberPagerState()
+    val tabIndex = pagerState.currentPage
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
-        modifier = Modifier
-            .clip(RoundedCornerShape(5.dp))
-            .padding(top = 10.dp)
+        modifier = Modifier.padding(top = 6.dp)
+            .clip(RoundedCornerShape(10.dp)),
     ) {
         TabRow(
-            selectedTabIndex = 0,
-            indicator = {},
-            backgroundColor = BlueLight
+            selectedTabIndex = tabIndex,
+            indicator = { pos ->
+                TabRowDefaults.Indicator(
+                    Modifier.pagerTabIndicatorOffset(pagerState, pos)
+                )
+            },
+            backgroundColor = BlueLight,
+            contentColor = Color.White
         ) {
             tabList.forEachIndexed { index, text ->
                 Tab(
                     selected = false,
-                    onClick = { },
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
                     text = {
                         Text(
-                            text = text,
-                            style = TextStyle(color = Color.White)
+                            text = text
                         )
                     }
                 )
             }
+        }
+
+        HorizontalPager(
+            count = tabList.size,
+            state = pagerState,
+            modifier = Modifier.weight(1.0f)
+        ) { index ->
         }
     }
 }
